@@ -1,0 +1,184 @@
+
+delayfunction.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000116  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  0000016a  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  0000016a  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000019c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000030  00000000  00000000  000001d8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000005dc  00000000  00000000  00000208  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000538  00000000  00000000  000007e4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000022a  00000000  00000000  00000d1c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000044  00000000  00000000  00000f48  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000033c  00000000  00000000  00000f8c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000004c  00000000  00000000  000012c8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000020  00000000  00000000  00001314  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 4e 00 	call	0x9c	; 0x9c <main>
+  64:	0c 94 89 00 	jmp	0x112	; 0x112 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <_Z9delay_ms2j>:
+	TCCR1B=(1<<CS10)|(1<<CS12);
+	while((TIFR&(1<<TOV1))==0);//wait until overflow occurs at max 65535
+	TIFR|=(1<<TOV1);
+}
+void delay_ms2(uint16_t T2)
+{   TCNT1=0;
+  6c:	1d bc       	out	0x2d, r1	; 45
+  6e:	1c bc       	out	0x2c, r1	; 44
+	OCR1A=(((F_CPU/1024)*T2)/1000);//using formula to calulate the requires OCF1A
+  70:	9c 01       	movw	r18, r24
+  72:	a0 ed       	ldi	r26, 0xD0	; 208
+  74:	b3 e0       	ldi	r27, 0x03	; 3
+  76:	0e 94 7a 00 	call	0xf4	; 0xf4 <__umulhisi3>
+  7a:	28 ee       	ldi	r18, 0xE8	; 232
+  7c:	33 e0       	ldi	r19, 0x03	; 3
+  7e:	40 e0       	ldi	r20, 0x00	; 0
+  80:	50 e0       	ldi	r21, 0x00	; 0
+  82:	0e 94 58 00 	call	0xb0	; 0xb0 <__udivmodsi4>
+  86:	3b bd       	out	0x2b, r19	; 43
+  88:	2a bd       	out	0x2a, r18	; 42
+	TCCR1B=(1<<CS10)|(1<<CS12);
+  8a:	85 e0       	ldi	r24, 0x05	; 5
+  8c:	8e bd       	out	0x2e, r24	; 46
+	while((TIFR&(1<<OCF1A))==0); //wait until output compare overflow  occurs
+  8e:	08 b6       	in	r0, 0x38	; 56
+  90:	04 fe       	sbrs	r0, 4
+  92:	fd cf       	rjmp	.-6      	; 0x8e <_Z9delay_ms2j+0x22>
+	TIFR|=(1<<OCF1A);
+  94:	88 b7       	in	r24, 0x38	; 56
+  96:	80 61       	ori	r24, 0x10	; 16
+  98:	88 bf       	out	0x38, r24	; 56
+  9a:	08 95       	ret
+
+0000009c <main>:
+	
+}
+int main(void)
+{ DDRA|=(1<<PINA0);
+  9c:	d0 9a       	sbi	0x1a, 0	; 26
+ 
+    while (1) 
+    { 
+		PORTA^=(1<<PINA0);
+  9e:	c1 e0       	ldi	r28, 0x01	; 1
+  a0:	8b b3       	in	r24, 0x1b	; 27
+  a2:	8c 27       	eor	r24, r28
+  a4:	8b bb       	out	0x1b, r24	; 27
+	    delay_ms2(1000);
+  a6:	88 ee       	ldi	r24, 0xE8	; 232
+  a8:	93 e0       	ldi	r25, 0x03	; 3
+  aa:	0e 94 36 00 	call	0x6c	; 0x6c <_Z9delay_ms2j>
+  ae:	f8 cf       	rjmp	.-16     	; 0xa0 <main+0x4>
+
+000000b0 <__udivmodsi4>:
+  b0:	a1 e2       	ldi	r26, 0x21	; 33
+  b2:	1a 2e       	mov	r1, r26
+  b4:	aa 1b       	sub	r26, r26
+  b6:	bb 1b       	sub	r27, r27
+  b8:	fd 01       	movw	r30, r26
+  ba:	0d c0       	rjmp	.+26     	; 0xd6 <__udivmodsi4_ep>
+
+000000bc <__udivmodsi4_loop>:
+  bc:	aa 1f       	adc	r26, r26
+  be:	bb 1f       	adc	r27, r27
+  c0:	ee 1f       	adc	r30, r30
+  c2:	ff 1f       	adc	r31, r31
+  c4:	a2 17       	cp	r26, r18
+  c6:	b3 07       	cpc	r27, r19
+  c8:	e4 07       	cpc	r30, r20
+  ca:	f5 07       	cpc	r31, r21
+  cc:	20 f0       	brcs	.+8      	; 0xd6 <__udivmodsi4_ep>
+  ce:	a2 1b       	sub	r26, r18
+  d0:	b3 0b       	sbc	r27, r19
+  d2:	e4 0b       	sbc	r30, r20
+  d4:	f5 0b       	sbc	r31, r21
+
+000000d6 <__udivmodsi4_ep>:
+  d6:	66 1f       	adc	r22, r22
+  d8:	77 1f       	adc	r23, r23
+  da:	88 1f       	adc	r24, r24
+  dc:	99 1f       	adc	r25, r25
+  de:	1a 94       	dec	r1
+  e0:	69 f7       	brne	.-38     	; 0xbc <__udivmodsi4_loop>
+  e2:	60 95       	com	r22
+  e4:	70 95       	com	r23
+  e6:	80 95       	com	r24
+  e8:	90 95       	com	r25
+  ea:	9b 01       	movw	r18, r22
+  ec:	ac 01       	movw	r20, r24
+  ee:	bd 01       	movw	r22, r26
+  f0:	cf 01       	movw	r24, r30
+  f2:	08 95       	ret
+
+000000f4 <__umulhisi3>:
+  f4:	a2 9f       	mul	r26, r18
+  f6:	b0 01       	movw	r22, r0
+  f8:	b3 9f       	mul	r27, r19
+  fa:	c0 01       	movw	r24, r0
+  fc:	a3 9f       	mul	r26, r19
+  fe:	70 0d       	add	r23, r0
+ 100:	81 1d       	adc	r24, r1
+ 102:	11 24       	eor	r1, r1
+ 104:	91 1d       	adc	r25, r1
+ 106:	b2 9f       	mul	r27, r18
+ 108:	70 0d       	add	r23, r0
+ 10a:	81 1d       	adc	r24, r1
+ 10c:	11 24       	eor	r1, r1
+ 10e:	91 1d       	adc	r25, r1
+ 110:	08 95       	ret
+
+00000112 <_exit>:
+ 112:	f8 94       	cli
+
+00000114 <__stop_program>:
+ 114:	ff cf       	rjmp	.-2      	; 0x114 <__stop_program>
